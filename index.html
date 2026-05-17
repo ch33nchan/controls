@@ -13,19 +13,19 @@
   >
   <style>
     :root {
-      --bg: #f4efe7;
-      --surface: #fffdf8;
-      --surface-2: #f9f5ee;
-      --ink: #171411;
-      --muted: #635b55;
-      --line: rgba(23, 20, 17, 0.1);
-      --shadow: 0 12px 30px rgba(23, 20, 17, 0.08);
+      --bg: #f5f1ea;
+      --surface: #fffefa;
+      --surface-2: #f4efe6;
+      --ink: #111111;
+      --muted: #6a655e;
+      --line: rgba(17, 17, 17, 0.09);
+      --shadow: 0 6px 18px rgba(17, 17, 17, 0.05);
       --cheen: #0d6d6d;
       --chittu: #a95b22;
       --both: #7b385f;
-      --teal-soft: #d9efef;
-      --orange-soft: #f7e2cf;
-      --plum-soft: #efdde9;
+      --teal-soft: #eef7f7;
+      --orange-soft: #fbf0e6;
+      --plum-soft: #f2ebf0;
       --accent: #111111;
       --blue-soft: #dbe6fa;
     }
@@ -37,9 +37,8 @@
     body {
       margin: 0;
       color: var(--ink);
-      background:
-        linear-gradient(180deg, #f8f3ea 0%, #f4efe7 100%);
-      font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, "Segoe UI", system-ui, sans-serif;
       min-height: 100vh;
     }
 
@@ -48,7 +47,7 @@
     .site {
       width: min(1240px, calc(100% - 20px));
       margin: 0 auto;
-      padding: 18px 0 40px;
+      padding: 16px 0 32px;
     }
 
     .frame,
@@ -57,12 +56,12 @@
     .note {
       background: var(--surface);
       border: 1px solid var(--line);
-      border-radius: 24px;
+      border-radius: 18px;
       box-shadow: var(--shadow);
     }
 
     .frame {
-      padding: 20px;
+      padding: 16px;
     }
 
     .hero {
@@ -76,7 +75,7 @@
     .hero-side {
       background: var(--surface);
       border: 1px solid var(--line);
-      border-radius: 22px;
+      border-radius: 16px;
       padding: 18px;
     }
 
@@ -91,11 +90,12 @@
 
     h1 {
       margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(2.4rem, 6vw, 4.4rem);
-      line-height: 0.95;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, "Segoe UI", system-ui, sans-serif;
+      font-size: clamp(2.1rem, 5.8vw, 4rem);
+      line-height: 0.92;
       max-width: 12ch;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.05em;
+      font-weight: 800;
     }
 
     .intro {
@@ -122,13 +122,13 @@
       padding: 10px 14px;
       font-weight: 700;
       font-size: 0.9rem;
-      border: 1px solid transparent;
+      border: 1px solid var(--line);
       background: #fff;
     }
 
-    .pill.cheen { background: var(--teal-soft); color: var(--cheen); }
-    .pill.chittu { background: var(--orange-soft); color: var(--chittu); }
-    .pill.both { background: var(--plum-soft); color: var(--both); }
+    .pill.cheen { background: #eef7f7; color: var(--cheen); }
+    .pill.chittu { background: #fbf0e6; color: var(--chittu); }
+    .pill.both { background: #f2ebf0; color: var(--both); }
 
     .lang-box {
       display: flex;
@@ -151,14 +151,14 @@
       gap: 8px;
       padding: 6px;
       background: var(--surface-2);
-      border-radius: 999px;
+      border-radius: 14px;
       border: 1px solid var(--line);
     }
 
     .seg-btn {
       appearance: none;
       border: 0;
-      border-radius: 999px;
+      border-radius: 10px;
       background: transparent;
       color: var(--muted);
       padding: 10px 12px;
@@ -168,7 +168,7 @@
     }
 
     .seg-btn.active {
-      background: #111;
+      background: #121212;
       color: #fff;
     }
 
@@ -180,15 +180,16 @@
     .stat {
       background: var(--surface-2);
       border: 1px solid var(--line);
-      border-radius: 18px;
+      border-radius: 14px;
       padding: 14px;
     }
 
     .stat h2 {
       margin: 0 0 10px;
-      font-size: 0.88rem;
+      font-size: 0.76rem;
       text-transform: uppercase;
       letter-spacing: 0.08em;
+      font-weight: 800;
     }
 
     .stat p {
@@ -205,7 +206,7 @@
     }
 
     .panel {
-      padding: 16px;
+      padding: 14px;
     }
 
     .panel h2 {
@@ -227,7 +228,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      border-radius: 999px;
+      border-radius: 14px;
       padding: 10px 14px;
       border: 1px solid var(--line);
       font-weight: 700;
@@ -235,9 +236,9 @@
       background: #fff;
     }
 
-    .chip.cheen { background: var(--teal-soft); color: var(--cheen); }
-    .chip.chittu { background: var(--orange-soft); color: var(--chittu); }
-    .chip.both { background: var(--plum-soft); color: var(--both); }
+    .chip.cheen { background: #eef7f7; color: var(--cheen); }
+    .chip.chittu { background: #fbf0e6; color: var(--chittu); }
+    .chip.both { background: #f2ebf0; color: var(--both); }
 
     .day-grid {
       margin-top: 18px;
@@ -255,9 +256,10 @@
 
     .section-head h2 {
       margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(1.45rem, 3.2vw, 2rem);
-      letter-spacing: -0.02em;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, "Segoe UI", system-ui, sans-serif;
+      font-size: clamp(1.45rem, 3.2vw, 1.9rem);
+      letter-spacing: -0.04em;
+      font-weight: 800;
     }
 
     .section-head span {
@@ -266,7 +268,7 @@
     }
 
     .day {
-      padding: 16px;
+      padding: 14px;
     }
 
     .day-top {
@@ -280,14 +282,16 @@
     .route {
       background: var(--surface-2);
       border: 1px solid var(--line);
-      border-radius: 20px;
+      border-radius: 14px;
       padding: 16px;
     }
 
     .story h3 {
       margin: 0 0 8px;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 1.35rem;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, "Segoe UI", system-ui, sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: -0.03em;
+      font-weight: 800;
     }
 
     .story p,
@@ -328,7 +332,7 @@
     .stop {
       background: #fff;
       border: 1px solid var(--line);
-      border-radius: 20px;
+      border-radius: 14px;
       padding: 14px;
     }
 
@@ -356,13 +360,15 @@
       background: #111;
       color: #fff;
       font-weight: 800;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+      box-shadow: none;
     }
 
     .stop h4 {
       margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 1.1rem;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, "Segoe UI", system-ui, sans-serif;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+      font-weight: 800;
     }
 
     .sub {
@@ -416,7 +422,7 @@
       padding: 16px;
       background: var(--surface);
       border: 1px solid var(--line);
-      border-radius: 22px;
+      border-radius: 16px;
       box-shadow: var(--shadow);
     }
 
@@ -451,7 +457,7 @@
       color: #fff;
       font-weight: 900;
       border: 3px solid rgba(255, 255, 255, 0.95);
-      box-shadow: 0 10px 16px rgba(0, 0, 0, 0.12);
+      box-shadow: none;
     }
 
     .marker.cheen { background: var(--cheen); }
