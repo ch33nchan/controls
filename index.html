@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delhi Itinerary for Cheen & Chittu</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  >
+  <style>
+    :root {
+      --bg: #f6f0e6;
+      --paper: #fffaf2;
+      --ink: #1d1814;
+      --muted: #6b6057;
+      --line: #ded2c4;
+      --shadow: 0 18px 38px rgba(39, 29, 19, 0.08);
+      --cheen: #0b6c68;
+      --cheen-soft: #d7f1ef;
+      --chittu: #95531f;
+      --chittu-soft: #f7e3d1;
+      --both: #77245a;
+      --both-soft: #f2d9ea;
+      --accent: #b53a32;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(181, 58, 50, 0.09), transparent 26%),
+        radial-gradient(circle at top right, rgba(11, 108, 104, 0.1), transparent 22%),
+        linear-gradient(180deg, #fbf7f0 0%, var(--bg) 100%);
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .wrap {
+      width: min(1240px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 26px 0 52px;
+    }
+
+    .hero,
+    .day,
+    .footer {
+      background: rgba(255, 250, 242, 0.94);
+      border: 1px solid rgba(29, 24, 20, 0.08);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -48px;
+      bottom: -54px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(11, 108, 104, 0.16), transparent 68%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      font-size: 0.8rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Iowan Old Style", "Palatino Linotype", serif;
+      font-size: clamp(2.2rem, 6vw, 4.3rem);
+      line-height: 0.96;
+      max-width: 10ch;
+    }
+
+    .hero p {
+      margin: 16px 0 0;
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 76ch;
+    }
+
+    .summary-grid {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr;
+      gap: 14px;
+    }
+
+    .summary-card {
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid rgba(29, 24, 20, 0.08);
+      border-radius: 20px;
+      padding: 16px;
+      backdrop-filter: blur(10px);
+    }
+
+    .summary-card h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .chip-row,
+    .bullet-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .chip,
+    .bullet {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+
+    .cheen {
+      background: var(--cheen-soft);
+      color: var(--cheen);
+      border-color: rgba(11, 108, 104, 0.16);
+    }
+
+    .chittu {
+      background: var(--chittu-soft);
+      color: var(--chittu);
+      border-color: rgba(149, 83, 31, 0.16);
+    }
+
+    .both {
+      background: var(--both-soft);
+      color: var(--both);
+      border-color: rgba(119, 36, 90, 0.16);
+    }
+
+    .bullet {
+      background: #faf3ea;
+      color: #544941;
+      border-color: rgba(29, 24, 20, 0.08);
+    }
+
+    .section-head {
+      margin: 30px 4px 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: baseline;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-family: "Iowan Old Style", "Palatino Linotype", serif;
+      font-size: clamp(1.45rem, 3.6vw, 2.2rem);
+    }
+
+    .section-head span {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .day {
+      padding: 22px;
+      margin-top: 16px;
+    }
+
+    .day-top {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .day-top h3 {
+      margin: 0 0 8px;
+      font-family: "Iowan Old Style", "Palatino Linotype", serif;
+      font-size: 1.55rem;
+    }
+
+    .day-top p,
+    .route-box p,
+    .stop p,
+    .footer p,
+    li {
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .route-box {
+      background: #fff;
+      border: 1px dashed rgba(29, 24, 20, 0.16);
+      border-radius: 18px;
+      padding: 14px 16px;
+    }
+
+    .route-box strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .map {
+      height: 420px;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      margin-bottom: 18px;
+    }
+
+    .stop-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .stop {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+    }
+
+    .stop-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .title-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .num {
+      min-width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--ink);
+      color: white;
+      font-weight: 800;
+      font-size: 0.95rem;
+      box-shadow: 0 8px 14px rgba(29, 24, 20, 0.14);
+    }
+
+    .stop h4 {
+      margin: 0;
+      font-family: "Iowan Old Style", "Palatino Linotype", serif;
+      font-size: 1.2rem;
+    }
+
+    .sub {
+      margin: 4px 0 0;
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 10px 0 12px;
+    }
+
+    .meta .bullet {
+      padding: 8px 10px;
+      font-size: 0.8rem;
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      text-decoration: none;
+      background: #fff9f2;
+      border: 1px solid rgba(29, 24, 20, 0.1);
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .footer {
+      margin-top: 28px;
+      padding: 22px;
+    }
+
+    .footer h3 {
+      margin: 0 0 8px;
+      font-size: 1.05rem;
+    }
+
+    ul {
+      margin: 10px 0 0;
+      padding-left: 18px;
+    }
+
+    .leaflet-popup-content-wrapper {
+      border-radius: 16px;
+    }
+
+    .popup-title {
+      margin: 0 0 4px;
+      font-weight: 800;
+      font-size: 0.98rem;
+    }
+
+    .popup-sub {
+      margin: 0;
+      font-size: 0.84rem;
+      color: #5e544b;
+      line-height: 1.5;
+    }
+
+    .marker {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 0.95rem;
+      border: 3px solid rgba(255, 255, 255, 0.92);
+      box-shadow: 0 10px 18px rgba(18, 14, 12, 0.18);
+    }
+
+    .marker.cheen {
+      background: var(--cheen);
+    }
+
+    .marker.chittu {
+      background: var(--chittu);
+    }
+
+    .marker.both {
+      background: var(--both);
+    }
+
+    @media (max-width: 980px) {
+      .summary-grid,
+      .day-top,
+      .stop-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .map {
+        height: 360px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .wrap {
+        width: min(100% - 16px, 1240px);
+        padding: 18px 0 36px;
+      }
+
+      .hero,
+      .day,
+      .footer {
+        padding: 18px;
+        border-radius: 22px;
+      }
+
+      .map {
+        height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <p class="eyebrow">Delhi · 21–24 May 2026 · Stay Base: Connaught Place</p>
+      <h1>Cheen & Chittu Delhi Plan</h1>
+      <p>
+        This version is fully <strong>day-wise</strong>, with <strong>numbered stop order</strong>, separate
+        interests for <strong>Cheen</strong> and <strong>Chittu</strong>, and one interactive <strong>route map per day</strong>.
+        The maps show each stop as a numbered balloon marker. Every card below also says
+        <strong>what the place is for</strong> and whether <strong>cab</strong>, <strong>metro</strong>, or
+        <strong>walking</strong> makes the most sense.
+      </p>
+
+      <div class="summary-grid">
+        <article class="summary-card">
+          <h2>Tag Guide</h2>
+          <div class="chip-row">
+            <span class="chip cheen">Cheen · toys, collectibles, books, camera-market detours</span>
+            <span class="chip chittu">Chittu · food, crafts, decor, shopping, easier pacing</span>
+            <span class="chip both">Both · iconic Delhi, shared food, common-interest stops</span>
+          </div>
+        </article>
+        <article class="summary-card">
+          <h2>Transport Rule</h2>
+          <div class="bullet-row">
+            <span class="bullet">Default: cab</span>
+            <span class="bullet">CP day: walk + short cab</span>
+            <span class="bullet">Use metro only if traffic is bad</span>
+          </div>
+        </article>
+        <article class="summary-card">
+          <h2>Hotel Rule</h2>
+          <div class="bullet-row">
+            <span class="bullet">CP / Janpath / Barakhamba / Patel Chowk</span>
+            <span class="bullet">Breakfast included</span>
+            <span class="bullet">Mid-range, clean, easy cab pickup</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <div class="section-head">
+      <h2>Day 1 · Friday, 22 May</h2>
+      <span>CP core + Janpath + evening India Gate / Parliament loop</span>
+    </div>
+
+    <section class="day">
+      <div class="day-top">
+        <div>
+          <h3>Low-travel start, then central Delhi at golden hour</h3>
+          <p>
+            This fixes the route properly: CP-heavy in the first half, then the government-area monuments in the evening.
+            It keeps the first full day comfortable and gives you the view you wanted around the flag, India Gate and Parliament.
+          </p>
+        </div>
+        <div class="route-box">
+          <strong>Planned route</strong>
+          <p>`Hotel in CP -> Ram Chander & Sons -> Janpath -> Depaul's -> evening rest -> Kartavya Path / National Flag -> India Gate -> Parliament / Rashtrapati drive -> dinner back in CP`</p>
+          <p><strong>Timing:</strong> `10:00–1:30` CP stops, `1:30–4:45` hotel/rest, `5:15–8:00` evening monument loop.</p>
+        </div>
+      </div>
+
+      <div id="map-day-1" class="map"></div>
+      <div id="stops-day-1" class="stop-grid"></div>
+    </section>
+
+    <div class="section-head">
+      <h2>Day 2 · Saturday, 23 May</h2>
+      <span>South Delhi and central-south mix: toys, books, crafts, art, Sarojini</span>
+    </div>
+
+    <section class="day">
+      <div class="day-top">
+        <div>
+          <h3>Cheen and Chittu day together, but without making it feel like two separate trips</h3>
+          <p>
+            This is the day where the toy-store detours are correctly moved out of CP and into the `Aurobindo / Hauz Khas`
+            belt. It also groups `Dilli Haat`, `Art Hub`, `Sarojini`, and the making/art stops into one coherent day.
+          </p>
+        </div>
+        <div class="route-box">
+          <strong>Planned route</strong>
+          <p>`Hotel in CP -> Jaiman Toys -> Midland Book Shop -> Dilli Haat -> Sarojini Nagar -> Art Hub -> Clay Company -> Nanda Book Service (optional add-on) -> back to CP`</p>
+          <p><strong>Timing:</strong> `10:00–12:00` Hauz Khas belt, `12:30–2:30` Dilli Haat, `3:00–5:00` Sarojini, `5:30 onward` art/creative stops.</p>
+        </div>
+      </div>
+
+      <div id="map-day-2" class="map"></div>
+      <div id="stops-day-2" class="stop-grid"></div>
+    </section>
+
+    <div class="section-head">
+      <h2>Day 3 · Sunday, 24 May</h2>
+      <span>Old Delhi icons, food, market detours, then airport</span>
+    </div>
+
+    <section class="day">
+      <div class="day-top">
+        <div>
+          <h3>One controlled Old Delhi run only</h3>
+          <p>
+            This keeps Old Delhi to a single day, starts early, and leaves enough airport buffer. `Sita Ram` and
+            `Gole Hatti` are handled as deliberate food anchors rather than random add-ons.
+          </p>
+        </div>
+        <div class="route-box">
+          <strong>Planned route</strong>
+          <p>`Hotel checkout -> Sita Ram Diwan Chand -> Red Fort -> Chaudhary Market -> Kabootar Market -> Gole Hatti -> airport`</p>
+          <p><strong>Timing:</strong> `8:30` checkout, `9:00` breakfast, `10:00–12:00` Red Fort, `12:00–1:30` market detours, `1:45` lunch, `2:30` airport departure.</p>
+        </div>
+      </div>
+
+      <div id="map-day-3" class="map"></div>
+      <div id="stops-day-3" class="stop-grid"></div>
+    </section>
+
+    <section class="footer">
+      <h3>Free hosting</h3>
+      <p>
+        This page is built as a static site and can be hosted for free. If GitHub Pages is enabled for this repo,
+        it will serve from the default branch root.
+      </p>
+      <ul>
+        <li>Repo target: `ch33nchan/controls`</li>
+        <li>All maps use free OpenStreetMap tiles through Leaflet.</li>
+        <li>If the GitHub Pages setting is not yet enabled, turn it on for `main` branch / root in repo settings.</li>
+      </ul>
+    </section>
+  </div>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script>
+    const days = [
+      {
+        mapId: "map-day-1",
+        listId: "stops-day-1",
+        stops: [
+          {
+            order: 1,
+            tag: "cheen",
+            name: "Ram Chander & Sons Toy Store",
+            subtitle: "CP, Odeon Building",
+            whatFor: "Classic toy store and first collectible check of the trip.",
+            travel: "Walk or 5 min cab from most CP hotels.",
+            slot: "10:00 AM",
+            time: "30–45 min",
+            placeType: "Toys / collectibles",
+            coords: [28.6343115, 77.2211807],
+            mapLink: "https://www.google.com/maps?q=Ram+Chander+%26+Sons+Toy+Store,+D-1+Odeon+Building,+Radial+Rd+5,+Connaught+Place,+New+Delhi,+Delhi+110001"
+          },
+          {
+            order: 2,
+            tag: "chittu",
+            name: "Janpath Market",
+            subtitle: "CP-side market",
+            whatFor: "Easy shopping stop for accessories, scarves, small gifts and casual browsing.",
+            travel: "Walk from central CP.",
+            slot: "11:00 AM",
+            time: "45–60 min",
+            placeType: "Market / shopping",
+            coords: [28.6277, 77.2198],
+            mapLink: "https://maps.app.goo.gl/QLWpdpYbf7zJLids9"
+          },
+          {
+            order: 3,
+            tag: "both",
+            name: "Depaul's",
+            subtitle: "Cold coffee and milkshake stop",
+            whatFor: "Mid-route cooling break for the famous cold coffee and shakes.",
+            travel: "Walk in Janpath / CP zone.",
+            slot: "12:15 PM",
+            time: "20–30 min",
+            placeType: "Food / drinks",
+            coords: [28.6283, 77.2208],
+            mapLink: "https://maps.app.goo.gl/V4An8FuiDmeU2XRC9"
+          },
+          {
+            order: 4,
+            tag: "both",
+            name: "Kartavya Path & National Flag stretch",
+            subtitle: "Central Vista evening view",
+            whatFor: "Shared iconic Delhi stop for the broad ceremonial vista and the evening light.",
+            travel: "Cab from CP.",
+            slot: "5:15 PM",
+            time: "35–45 min",
+            placeType: "Iconic sightseeing",
+            coords: [28.6148, 77.2268],
+            mapLink: "https://www.google.com/maps?q=Kartavya+Path+New+Delhi"
+          },
+          {
+            order: 5,
+            tag: "both",
+            name: "India Gate",
+            subtitle: "Main evening landmark",
+            whatFor: "Photo stop and shared central Delhi experience.",
+            travel: "Continue in same cab loop.",
+            slot: "6:00 PM",
+            time: "30–40 min",
+            placeType: "Iconic monument",
+            coords: [28.6129, 77.2295],
+            mapLink: "https://www.google.com/maps?q=India+Gate+New+Delhi"
+          },
+          {
+            order: 6,
+            tag: "both",
+            name: "Parliament / Rashtrapati side drive",
+            subtitle: "Outside view only",
+            whatFor: "The final evening drive section for the Parliament area and the wider Lutyens Delhi axis.",
+            travel: "Same cab loop.",
+            slot: "6:45 PM",
+            time: "30–40 min",
+            placeType: "Government district drive-by",
+            coords: [28.6178, 77.2125],
+            mapLink: "https://www.google.com/maps?q=Parliament+House+New+Delhi"
+          }
+        ]
+      },
+      {
+        mapId: "map-day-2",
+        listId: "stops-day-2",
+        stops: [
+          {
+            order: 1,
+            tag: "cheen",
+            name: "Jaiman Toys",
+            subtitle: "Aurobindo Market, Hauz Khas",
+            whatFor: "Big toy-store stop with LEGO, games and general collectible interest. This is one of the corrected places that belongs on the South Delhi day, not the CP day.",
+            travel: "Cab from CP. Green Park metro is nearest if needed.",
+            slot: "10:30 AM",
+            time: "40–60 min",
+            placeType: "Toys / LEGO / games",
+            coords: [28.5488, 77.2058],
+            mapLink: "https://maps.app.goo.gl/1Si1csm1JdESzXxv9"
+          },
+          {
+            order: 2,
+            tag: "cheen",
+            name: "Midland Book Shop",
+            subtitle: "Aurobindo Market branch",
+            whatFor: "Strong companion stop to Jaiman Toys in the same area. Good for browsing without another long detour.",
+            travel: "Same market belt as Jaiman Toys.",
+            slot: "11:30 AM",
+            time: "30–45 min",
+            placeType: "Book shop",
+            coords: [28.5489, 77.2055],
+            mapLink: "https://maps.app.goo.gl/H4ByzJodJnYNP4mC6"
+          },
+          {
+            order: 3,
+            tag: "chittu",
+            name: "Dilli Haat",
+            subtitle: "INA",
+            whatFor: "The best stop for Chittu: crafts, small decor, handmade goods, textiles and easy browsing.",
+            travel: "Cab preferred; metro possible via INA.",
+            slot: "12:45 PM",
+            time: "1.5–2 hrs",
+            placeType: "Crafts / decor / food",
+            coords: [28.5732, 77.2070],
+            mapLink: "https://maps.app.goo.gl/nP2wEztsPnUrmLLf9"
+          },
+          {
+            order: 4,
+            tag: "chittu",
+            name: "Sarojini Nagar Market",
+            subtitle: "Short tactical visit",
+            whatFor: "Bargain shopping stop for clothes, bags, accessories and fun market energy. Keep this short and targeted.",
+            travel: "Cab preferred; metro also viable.",
+            slot: "3:15 PM",
+            time: "1.5–2 hrs max",
+            placeType: "Market / bargain shopping",
+            coords: [28.5756, 77.1992],
+            mapLink: "https://maps.app.goo.gl/Ma4NZ4jqH7YtazEt5"
+          },
+          {
+            order: 5,
+            tag: "chittu",
+            name: "The Art Hub",
+            subtitle: "South Extension I",
+            whatFor: "Art-school / museum-feel visit that makes the day less shopping-heavy.",
+            travel: "Cab from Sarojini or INA belt.",
+            slot: "5:30 PM",
+            time: "45–60 min",
+            placeType: "Art / visit stop",
+            coords: [28.5677, 77.2203],
+            mapLink: "https://maps.app.goo.gl/kEzkB3BEUoJ3RM8t7"
+          },
+          {
+            order: 6,
+            tag: "both",
+            name: "The Clay Company",
+            subtitle: "Nehru Place",
+            whatFor: "A creative stop and a place to visit rather than a pure shopping errand.",
+            travel: "Cab from South Extension.",
+            slot: "6:30 PM",
+            time: "45–75 min",
+            placeType: "Activity / pottery / creative stop",
+            coords: [28.5488, 77.2512],
+            mapLink: "https://maps.app.goo.gl/LPEi7Lr8GcvJMgTh6"
+          },
+          {
+            order: 7,
+            tag: "cheen",
+            name: "Nanda Book Service",
+            subtitle: "Optional Nehru Place add-on",
+            whatFor: "Included because you asked for it explicitly. Treated as an optional add-on because the exact branch from the shared short link was not fully visible.",
+            travel: "Cab; do only if energy remains after Clay Company.",
+            slot: "7:45 PM",
+            time: "20–30 min",
+            placeType: "Book stop / optional extension",
+            coords: [28.5498, 77.2518],
+            mapLink: "https://maps.app.goo.gl/XztzkxBrznyQBHkP6"
+          }
+        ]
+      },
+      {
+        mapId: "map-day-3",
+        listId: "stops-day-3",
+        stops: [
+          {
+            order: 1,
+            tag: "both",
+            name: "Sita Ram Diwan Chand",
+            subtitle: "Breakfast anchor",
+            whatFor: "Your `chole bhature` stop. Do this first while still near the central belt before moving into Old Delhi.",
+            travel: "Short cab from CP hotel after checkout.",
+            slot: "9:00 AM",
+            time: "30–40 min",
+            placeType: "Food / breakfast",
+            coords: [28.6442, 77.2123],
+            mapLink: "https://maps.app.goo.gl/cF9dLMR28eJYEjXYA"
+          },
+          {
+            order: 2,
+            tag: "both",
+            name: "Red Fort",
+            subtitle: "Main Old Delhi monument",
+            whatFor: "The core historical stop. Morning is the right slot before the area gets more tiring.",
+            travel: "Cab from breakfast stop.",
+            slot: "10:00 AM",
+            time: "1.5–2 hrs",
+            placeType: "Iconic monument",
+            coords: [28.6562, 77.2410],
+            mapLink: "https://www.google.com/maps?q=Red+Fort+Delhi"
+          },
+          {
+            order: 3,
+            tag: "cheen",
+            name: "Chaudhary Market",
+            subtitle: "Camera Market",
+            whatFor: "Camera-market detour folded into the Old Delhi run, not treated as a separate cross-city trip.",
+            travel: "Short cab or walk segment from Red Fort area.",
+            slot: "12:15 PM",
+            time: "30–45 min",
+            placeType: "Camera market",
+            coords: [28.6570, 77.2307],
+            mapLink: "https://maps.app.goo.gl/iTY5UMo1v9YZdUpJ7"
+          },
+          {
+            order: 4,
+            tag: "both",
+            name: "Kabootar Market",
+            subtitle: "Shoes and stuff",
+            whatFor: "Quick browse stop only. Do not let this become a long wander.",
+            travel: "Short transfer from Chaudhary Market.",
+            slot: "1:00 PM",
+            time: "20–30 min",
+            placeType: "Market / shoes / mixed",
+            coords: [28.6555, 77.2335],
+            mapLink: "https://maps.app.goo.gl/s8SuUvHrPoWFyhxk9"
+          },
+          {
+            order: 5,
+            tag: "both",
+            name: "Gole Hatti",
+            subtitle: "Lunch stop",
+            whatFor: "The second deliberate food stop of the day, placed after the Old Delhi run before heading airport-side.",
+            travel: "Cab back toward central Delhi side.",
+            slot: "1:45 PM",
+            time: "30–40 min",
+            placeType: "Food / lunch",
+            coords: [28.6327, 77.2039],
+            mapLink: "https://maps.app.goo.gl/VDcGNwE2YLWtYCx9A"
+          }
+        ]
+      }
+    ];
+
+    function markerHtml(order, tag) {
+      return `<div class="marker ${tag}">${order}</div>`;
+    }
+
+    function renderStopCard(stop) {
+      return `
+        <article class="stop">
+          <div class="stop-top">
+            <div class="title-group">
+              <span class="num">${stop.order}</span>
+              <div>
+                <h4>${stop.name}</h4>
+                <p class="sub">${stop.subtitle}</p>
+              </div>
+            </div>
+            <span class="chip ${stop.tag}">${capitalize(stop.tag)}</span>
+          </div>
+          <p>${stop.whatFor}</p>
+          <div class="meta">
+            <span class="bullet">For: ${stop.placeType}</span>
+            <span class="bullet">Slot: ${stop.slot}</span>
+            <span class="bullet">Travel: ${stop.travel}</span>
+            <span class="bullet">Time: ${stop.time}</span>
+          </div>
+          <div class="links">
+            <a class="link-btn" href="${stop.mapLink}" target="_blank" rel="noreferrer">Open in Maps</a>
+          </div>
+        </article>
+      `;
+    }
+
+    function capitalize(v) {
+      if (v === "both") return "Both";
+      if (v === "cheen") return "Cheen";
+      if (v === "chittu") return "Chittu";
+      return v;
+    }
+
+    function renderDay(day) {
+      const list = document.getElementById(day.listId);
+      list.innerHTML = day.stops.map(renderStopCard).join("");
+
+      const map = L.map(day.mapId, {
+        scrollWheelZoom: false
+      });
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors"
+      }).addTo(map);
+
+      const latLngs = [];
+
+      day.stops.forEach(stop => {
+        const icon = L.divIcon({
+          className: "",
+          html: markerHtml(stop.order, stop.tag),
+          iconSize: [36, 36],
+          iconAnchor: [18, 18]
+        });
+
+        const marker = L.marker(stop.coords, { icon }).addTo(map);
+        marker.bindPopup(`
+          <p class="popup-title">${stop.order}. ${stop.name}</p>
+          <p class="popup-sub">${stop.placeType}<br>${stop.whatFor}</p>
+        `);
+        latLngs.push(stop.coords);
+      });
+
+      if (latLngs.length > 1) {
+        L.polyline(latLngs, {
+          color: "#8c5645",
+          weight: 4,
+          opacity: 0.7,
+          dashArray: "8 8"
+        }).addTo(map);
+      }
+
+      map.fitBounds(latLngs, { padding: [32, 32] });
+    }
+
+    days.forEach(renderDay);
+  </script>
+</body>
+</html>
