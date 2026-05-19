@@ -23,9 +23,9 @@
       --cheen: #0d6d6d;
       --chittu: #a95b22;
       --both: #7b385f;
-      --teal-soft: #eef7f7;
-      --orange-soft: #fbf0e6;
-      --plum-soft: #f2ebf0;
+      --teal-soft: #d9efef;
+      --orange-soft: #f7e2cf;
+      --plum-soft: #efdde9;
       --accent: #111111;
       --blue-soft: #dbe6fa;
     }
@@ -236,9 +236,9 @@
       background: #fff;
     }
 
-    .chip.cheen { background: #eef7f7; color: var(--cheen); }
-    .chip.chittu { background: #fbf0e6; color: var(--chittu); }
-    .chip.both { background: #f2ebf0; color: var(--both); }
+    .chip.cheen { background: var(--teal-soft); color: var(--cheen); }
+    .chip.chittu { background: var(--orange-soft); color: var(--chittu); }
+    .chip.both { background: var(--plum-soft); color: var(--both); }
 
     .day-grid {
       margin-top: 18px;
@@ -316,7 +316,7 @@
 
     .map {
       height: 380px;
-      border-radius: 20px;
+      border-radius: 14px;
       border: 1px solid var(--line);
       overflow: hidden;
       background: #f7f7f7;
@@ -512,7 +512,8 @@
           <p class="kicker" data-i18n="heroKicker">Delhi trip · 21–24 May 2026 · Connaught Circus base</p>
           <h1 data-i18n="heroTitle">Cheen & Chittu Delhi itinerary</h1>
           <p class="intro" data-i18n-html="heroIntro">
-            A clean, production-style itinerary with <strong>day-wise routing</strong>, <strong>numbered stops</strong>, live map sections, and separate paths for <strong>Cheen</strong> and <strong>Chittu</strong>.
+            A clean, production-style itinerary with <strong>day-wise routing</strong>, <strong>numbered stops</strong>,
+            live map sections, and separate paths for <strong>Cheen</strong> and <strong>Chittu</strong>.
           </p>
           <div class="mini-row" aria-label="Trip tags">
             <span class="pill cheen" data-i18n="tagCheen">Cheen · toys, collectibles, books, camera market</span>
@@ -535,6 +536,10 @@
           <div class="stat">
             <h2 data-i18n="hotelTitle">Booked stay</h2>
             <p data-i18n="hotelText">M-20, Connaught Circus, New Delhi 110001</p>
+          </div>
+          <div class="stat">
+            <h2 data-i18n="updatesTitle">Latest changes</h2>
+            <p data-i18n="updatesText">Added a clearer changelog card, kept the bilingual toggle, preserved numbered map stops, and kept the layout mobile-first.</p>
           </div>
         </aside>
       </div>
@@ -648,6 +653,8 @@
         travelText: "Default to cab. Use metro where it removes traffic pain. Keep the hotel central.",
         hotelTitle: "Booked stay",
         hotelText: "M-20, Connaught Circus, New Delhi 110001",
+        updatesTitle: "Latest changes",
+        updatesText: "Added a clearer changelog card, kept the bilingual toggle, preserved numbered map stops, and kept the layout mobile-first.",
         tagTitle: "Focus",
         focusCheen: "Cheen: collector stops and specialty shops",
         focusChittu: "Chittu: crafts, shopping, food, easier pacing",
@@ -696,6 +703,8 @@
         travelText: "இயல்பாக கேப். டிராஃபிக் குறைய மெட்ரோ பயன்படட்டும். ஹோட்டல் மையமாக இருக்கட்டும்.",
         hotelTitle: "புக் செய்த stay",
         hotelText: "M-20, Connaught Circus, New Delhi 110001",
+        updatesTitle: "சமீப மாற்றங்கள்",
+        updatesText: "தெளிவான மாற்றச் சுருக்க அட்டையை சேர்த்தேன், bilingual toggle-ஐ வைத்தேன், எண்ணிட்ட map stops-ஐ பாதுகாத்தேன், mobile-first layout-ஐ வைத்தேன்.",
         tagTitle: "கவனம்",
         focusCheen: "சீன்: collector stops மற்றும் specialty shops",
         focusChittu: "சிட்டு: crafts, shopping, food, relaxed pace",
